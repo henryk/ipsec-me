@@ -1,0 +1,2 @@
+graft ipsec_me
+include *.cfg *.rst *.in *.txt *.ini *.mako *.html *.js *.css *.jpg *.gif
