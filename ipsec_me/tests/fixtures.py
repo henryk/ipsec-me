@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ipsec-me (c) Henryk Plötz
 
-from ..models import Role, User
+from ..models import Role, User, VPNServer
 
 
 def typical_workflow():
@@ -9,7 +9,7 @@ def typical_workflow():
 
     Role.add_default_roles()
 
-    User.register(
+    u = User.register(
         email="guest@example.com",
         password="guest",
         roles=["User"],
@@ -20,3 +20,10 @@ def typical_workflow():
         password="axw",
         roles=["Admin"],
     )
+
+    v = VPNServer.create(
+        name="VPN CA 1",
+        external_hostname="vpn.example.com"
+    )
+
+    v.add_user(u)

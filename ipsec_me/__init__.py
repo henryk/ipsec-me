@@ -4,13 +4,25 @@
 from flask_diamond import Diamond
 from flask_diamond.facets.administration import AdminModelView
 from flask_diamond.facets.database import db
-from .models import User, Role
+from .models import User, Role, VPNServer, CertificateAuthority, VPNUser, GenericPskXauthDevice, GenericUserCertificateDevice
+from .config import DefaultConfig
 
 # declare these globalish objects before initializing models
 application = None
 
 
 class ipsec_me(Diamond):
+    def init_configuration(self):
+        """
+        Load the application configuration from the ``SETTINGS`` environment variable.
+
+        :returns: None
+
+        ``SETTINGS`` must contain a filename that points to the configuration file.
+        """
+
+        self.app.config.from_object('ipsec_me.DefaultConfig')
+        self.app.config.from_envvar('SETTINGS')
 
     def init_accounts(self):
         "initialize accounts with the User and Role classes imported from .models"
@@ -22,6 +34,11 @@ class ipsec_me(Diamond):
         admin = self.super("administration", user=User, role=Role)
 
         model_list = [
+            VPNServer,
+            CertificateAuthority,
+            VPNUser,
+            GenericPskXauthDevice,
+            GenericUserCertificateDevice
         ]
 
         for model in model_list:
@@ -65,7 +82,7 @@ def create_app():
         # application.facet("rest", api_map=api_map)
         # application.facet("webassets")
         # application.facet("email")
-        # application.facet("debugger")
+        application.facet("debugger")
         # application.facet("task_queue")
 
     # print application.app.url_map

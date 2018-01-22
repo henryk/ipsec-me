@@ -1,0 +1,637 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"rec",
+				"recursion"
+			],
+			[
+				"ACC",
+				"ACCEPTABLE_ZIP"
+			],
+			[
+				"mag",
+				"magic_type"
+			],
+			[
+				"app",
+				"application"
+			],
+			[
+				"upl",
+				"upload_count"
+			],
+			[
+				"all",
+				"allowed_recipient"
+			],
+			[
+				"re",
+				"recipient"
+			],
+			[
+				"reci",
+				"recipients"
+			],
+			[
+				"imap",
+				"imapclient"
+			],
+			[
+				"target",
+				"target_folder"
+			],
+			[
+				"targ",
+				"target_folder"
+			],
+			[
+				"load",
+				"load_config"
+			],
+			[
+				"js",
+				"json_api_multipart"
+			],
+			[
+				"get",
+				"get_url"
+			],
+			[
+				"json_",
+				"json_api_get"
+			],
+			[
+				"pu",
+				"pubport"
+			],
+			[
+				"mailman",
+				"mailman_primary_domain"
+			],
+			[
+				"inclu",
+				"include_tasks"
+			],
+			[
+				"internal_",
+				"internal_service_ports"
+			],
+			[
+				"cnss",
+				"cnss-web-default"
+			],
+			[
+				"new",
+				"new_values"
+			],
+			[
+				"che",
+				"check_mode"
+			],
+			[
+				"comm",
+				"command_parts"
+			],
+			[
+				"old_va",
+				"old_value"
+			],
+			[
+				"post",
+				"postfix_main_cf"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 104.0,
+		"last_filter": "conv tab",
+		"selected_items":
+		[
+			[
+				"conv tab",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"tog",
+				"Toggle Comment"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"git stat",
+				"Git: Status"
+			],
+			[
+				"togg",
+				"Toggle Comment"
+			],
+			[
+				"reveal",
+				"File: Reveal"
+			],
+			[
+				"install p",
+				"Package Control: Install Package"
+			],
+			[
+				"remove ",
+				"Package Control: Remove Package"
+			],
+			[
+				"package ins",
+				"Package Control: Install Package"
+			],
+			[
+				"packa ins",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 618.0
+	},
+	"console":
+	{
+		"height": 198.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '6f4c264a24d933ce70df5dedcf1dcaee' + 'ebe013ee18cced0ef93d5f746d80ef60'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/Henryk/prog/ipsec-me"
+	],
+	"file_history":
+	[
+		"/C/Users/Henryk/prog/lexoffice-belegmail/test.py",
+		"/C/Users/Henryk/prog/lexoffice-belegmail/.gitignore",
+		"/C/Users/Henryk/Android/lexware/base/AndroidManifest.xml",
+		"/C/Users/Henryk/Android/lexware/base/original/META-INF/CERT.RSA",
+		"/C/Users/Henryk/Android/lexware/base/original/AndroidManifest.xml",
+		"/C/Users/Henryk/prog/central-services/roles/mailman2-server/files/api.py",
+		"/C/Users/Henryk/Downloads/eb_config_decoder/eb_config_decoder.java",
+		"/C/Users/Henryk/AppData/Local/Temp/Temp1_eb_config_decoder.zip/eb_config_decoder.java",
+		"/C/Users/Henryk/prog/central-services/roles/postfix-server/tasks/postfix-setting.yml",
+		"/C/Users/Henryk/prog/central-services/roles/letsencrypt/tasks/link-web-frontend.yml",
+		"/C/Users/Henryk/prog/central-services/roles/letsencrypt/tasks/web-install.yml",
+		"/C/Program Files (x86)/xca/vpn-vivid.ploetzli.ch.pem"
+	],
+	"find":
+	{
+		"height": 60.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 36.0
+	},
+	"input":
+	{
+		"height": 54.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.git-commit":
+	{
+		"height": 156.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "ipsec-me.sublime-project",
+	"replace":
+	{
+		"height": 66.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"req",
+				"requirements.txt"
+			],
+			[
+				"",
+				"test.py"
+			],
+			[
+				"cryptohelp",
+				"smali\\com\\haufelexware\\lexofficescan\\common\\CryptoHelper.smali"
+			],
+			[
+				"vivid",
+				"inventory\\vivid"
+			],
+			[
+				"ode-",
+				"roles\\ode-server\\defaults\\main.yml"
+			],
+			[
+				"ode-ser",
+				"roles\\ode-server\\templates\\settings.py.j2"
+			],
+			[
+				"hyper",
+				"roles\\hypervisor\\tasks\\update_domain.yml"
+			],
+			[
+				"back",
+				"backend-infrastructure.yml"
+			],
+			[
+				"ise",
+				"inventory\\isegrim"
+			],
+			[
+				"isegr",
+				"inventory\\isegrim"
+			],
+			[
+				"sett",
+				"roles\\ode-server\\templates\\settings.py.j2"
+			],
+			[
+				"odedef",
+				"roles\\ode-server\\defaults\\main.yml"
+			],
+			[
+				"ode",
+				"roles\\ode-server\\tasks\\main.yml"
+			],
+			[
+				"web-app",
+				"web-apps.yml"
+			],
+			[
+				"mailman2",
+				"roles\\mailman2-server\\tasks\\main.yml"
+			],
+			[
+				"ode-server",
+				"roles\\ode-server\\defaults\\main.yml"
+			],
+			[
+				"mailman-a",
+				"roles\\mailman2-server\\tasks\\main.yml"
+			],
+			[
+				"ode-se",
+				"roles\\ode-server\\tasks\\main.yml"
+			],
+			[
+				"letsenc",
+				"roles\\letsencrypt\\tasks\\setup-handler.yml"
+			],
+			[
+				"ansible-htt",
+				"roles\\web-frontend\\templates\\ansible-http.j2"
+			],
+			[
+				"web-fron",
+				"roles\\web-frontend\\tasks\\main.yml"
+			],
+			[
+				"handl",
+				"roles\\mailman2-server\\handlers\\main.yml"
+			],
+			[
+				"web-f",
+				"roles\\web-frontend\\templates\\ansible-http.j2"
+			],
+			[
+				"web-front",
+				"roles\\web-frontend\\tasks\\main.yml"
+			],
+			[
+				"ostconf",
+				"library\\postconf.py"
+			],
+			[
+				"postfix-spf",
+				"roles\\postfix-spf\\tasks\\main.yml"
+			],
+			[
+				"i",
+				"inventory\\isegrim"
+			],
+			[
+				"mail-ser",
+				"roles\\mail-server\\tasks\\main.yml"
+			],
+			[
+				"dns-ser",
+				"roles\\dns-server\\tasks\\main.yml"
+			],
+			[
+				"iseg",
+				"inventory\\isegrim"
+			],
+			[
+				"authent",
+				"roles\\authentication-server\\tasks\\main.yml"
+			],
+			[
+				"authe",
+				"roles\\authentication-server\\tasks\\main.yml"
+			],
+			[
+				"ldap-post",
+				"roles\\mail-server\\tasks\\configure-ldap-postfix.yml"
+			],
+			[
+				"mail-s",
+				"roles\\mail-server\\tasks\\main.yml"
+			],
+			[
+				"wordpresslda",
+				"roles\\wordpress-server\\tasks\\configure-ldap.yml"
+			],
+			[
+				"nextmain",
+				"roles\\nextcloud-server\\tasks\\main.yml"
+			],
+			[
+				"nextinit",
+				"roles\\nextcloud-server\\tasks\\initial-install.yml"
+			],
+			[
+				"initi",
+				"roles\\authentication-server\\tasks\\initial-install.yml"
+			],
+			[
+				"nextcloud/defa",
+				"roles\\nextcloud-server\\defaults\\main.yml"
+			],
+			[
+				"nextcloud-",
+				"roles\\nextcloud-server\\tasks\\main.yml"
+			],
+			[
+				"ldap",
+				"roles\\nextcloud-server\\tasks\\configure-ldap.yml"
+			],
+			[
+				"word",
+				"roles\\wordpress-server\\defaults\\main.yml"
+			],
+			[
+				"wordpress",
+				"roles\\wordpress-server\\tasks\\main.yml"
+			],
+			[
+				"ansible-",
+				"roles\\web-frontend\\templates\\ansible-https.j2"
+			],
+			[
+				"site.",
+				"site.yml"
+			],
+			[
+				"gener",
+				"roles\\letsencrypt\\tasks\\generate-csr.yml"
+			],
+			[
+				"main-we",
+				"roles\\letsencrypt\\tasks\\main-web.yml"
+			],
+			[
+				"inser",
+				"roles\\letsencrypt\\tasks\\install-handler.yml"
+			],
+			[
+				"basic-in",
+				"roles\\letsencrypt\\tasks\\basic-install.yml"
+			],
+			[
+				"web-",
+				"web-infrastructure.yml"
+			],
+			[
+				"csr",
+				"roles\\letsencrypt\\tasks\\generate-csr.yml"
+			],
+			[
+				"upgrade",
+				"roles\\upgrade-reboot\\tasks\\main.yml"
+			],
+			[
+				"post",
+				"library\\postconf.py"
+			],
+			[
+				"clamav-milter",
+				"roles\\clamav-milter\\tasks\\main.yml"
+			],
+			[
+				"clamav",
+				"roles\\clamav-unofficial-sigs\\tasks\\main.yml"
+			],
+			[
+				"postfix-sp",
+				"roles\\postfix-spf\\tasks\\main.yml"
+			],
+			[
+				"postfix-re",
+				"roles\\postfix-restrictions\\tasks\\main.yml"
+			],
+			[
+				"config",
+				"roles\\mail-server\\tasks\\configure-ldap-postfix.yml"
+			],
+			[
+				"postc",
+				"library\\postconf.py"
+			],
+			[
+				"basic",
+				"roles\\letsencrypt\\tasks\\basic-install.yml"
+			],
+			[
+				"netwo",
+				"manage-network.yml"
+			],
+			[
+				"letsen",
+				"roles\\web-frontend\\tasks\\letsencrypt.yml"
+			],
+			[
+				"web-fr",
+				"web-infrastructure.yml"
+			],
+			[
+				"lets",
+				"roles\\letsencrypt\\tasks\\main.yml"
+			],
+			[
+				"web-in",
+				"web-infrastructure.yml"
+			],
+			[
+				"site",
+				"site.yml"
+			],
+			[
+				"postfi",
+				"roles\\mail-server\\tasks\\configure-ldap-postfix.yml"
+			],
+			[
+				"is",
+				"inventory\\isegrim"
+			],
+			[
+				"vivi",
+				"inventory\\vivid"
+			],
+			[
+				"user-ma",
+				"roles\\user-management\\tasks\\handle_user.yml"
+			],
+			[
+				"mana",
+				"manage-users.yml"
+			],
+			[
+				"dns-server",
+				"roles\\dns-server\\tasks\\main.yml"
+			],
+			[
+				"update",
+				"roles\\hypervisor\\tasks\\update_domain.yml"
+			],
+			[
+				"qemu",
+				"roles\\hypervisor\\files\\qemu-hook.py"
+			],
+			[
+				"qem",
+				"roles\\hypervisor\\files\\qemu-hook.py"
+			],
+			[
+				"run-",
+				"run-updates.yml"
+			],
+			[
+				"setup",
+				"roles\\hypervisor\\tasks\\setup_domain.yml"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 651.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

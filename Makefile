@@ -5,7 +5,7 @@ PROJECT_NAME=ipsec-me
 MOD_NAME=ipsec_me
 WATCHMEDO_PATH=$$(which watchmedo)
 NOSETESTS_PATH=$$(which nosetests)
-TEST_CMD=SETTINGS=$$PWD/etc/conf/testing.conf $(NOSETESTS_PATH) $(MOD_NAME)
+TEST_CMD=SETTINGS=$$PWD/etc/conf/testing.conf SILENCE_DEPRECATION=1 $(NOSETESTS_PATH) $(MOD_NAME)
 
 install:
 	python setup.py install
