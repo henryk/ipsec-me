@@ -11,7 +11,7 @@ from flask_migrate import Migrate, MigrateCommand, upgrade
 import alembic
 import alembic.config
 from ipsec_me import create_app, db
-from ipsec_me.models import User, Role
+from ipsec_me.models import User, Role, VPNServer, UserType
 
 app = create_app()
 migrate = Migrate(app, db, directory="ipsec_me/migrations")
@@ -56,6 +56,22 @@ def user_del(email):
         print("Deleted")
     else:
         print("User not found")
+
+@manager.option('-n', '--name', help='VPN name', required=True)
+@manager.option('-h', '--hostname', help='VPN server hostname', required=True)
+@manager.option('-u', '--user', help='VPN user', required=False, nargs='*')
+@manager.option('-a', '--admin-user', help='VPN admin user', required=False, nargs='*')
+@manager.option('-b', '--base-dn', help='VPN CA base DN', required=False, default="")
+def vpn_create(name, hostname, user, admin_user, base_dn):
+    "Create a VPN"
+    v = VPNServer.create(name=name, external_hostname=hostname, CA_params={'base_dn': base_dn})
+    for email in user:
+        u = User.find(email=email)
+        v.add_user(u, user_type=UserType.USER)
+    for email in admin_user:
+        u = User.find(email=email)
+        v.add_user(u, user_type=UserType.ADMIN)
+    print("Created")
 
 
 @manager.command

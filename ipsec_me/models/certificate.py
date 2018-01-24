@@ -12,6 +12,8 @@ from flask import current_app
 from enum import Enum
 from datetime import datetime, timedelta
 from subprocess import run, PIPE
+from hashlib import sha256
+from OpenSSL import crypto as crypto_openssl
 
 from cryptography import x509
 from cryptography.x509.oid import ObjectIdentifier, NameOID, ExtendedKeyUsageOID
@@ -24,8 +26,14 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from pyasn1_modules import rfc2459
 from pyasn1.codec.der import decoder
 
+from uuid import uuid4
+from .utils import GUID
+
 X509_NAME_MAP = {
     'CN': NameOID.COMMON_NAME,
+    'O': NameOID.ORGANIZATION_NAME,
+    'OU': NameOID.ORGANIZATIONAL_UNIT_NAME,
+    'C': NameOID.COUNTRY_NAME,
 }
 
 _CERTIFICATE_SETTINGS_SELFSIGN = lambda b, **extras: \
@@ -67,7 +75,7 @@ class CertificateStatus(Enum):
 
 class Certificate(db.Model, CRUDMixin):
     __tablename__ = "certificate"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(GUID, primary_key=True, default=uuid4)
 
     certificate = db.Column(db.LargeBinary())
     private_key = db.Column(db.LargeBinary())
@@ -106,7 +114,7 @@ class Certificate(db.Model, CRUDMixin):
             status = CertificateStatus.REQUEST
         else:
             base = x509.CertificateBuilder()
-            sign_cb = sign_ca.sign_certificate
+            sign_cb = lambda a: sign_ca.sign_certificate(a.serial_number(extras['serial_number']))
             status = CertificateStatus.ACTIVE
 
         certificate = sign_cb( settings(base, subject=subject, key=key, **extras) )
@@ -125,7 +133,6 @@ class Certificate(db.Model, CRUDMixin):
     def sign_certificate(self, cert_builder):
         ## FIXME: Serial number
         return cert_builder.issuer_name(self._certificate.subject) \
-            .serial_number(x509.random_serial_number()) \
             .sign(self._private_key, hashes.SHA256(), default_backend())
 
     def prettyPrint(self, use_openssl=True):
@@ -135,3 +142,25 @@ class Certificate(db.Model, CRUDMixin):
         else:
             cert = decoder.decode(self.certificate, asn1Spec=rfc2459.Certificate())[0]
             return cert.prettyPrint()
+
+    def get_pkcs12(self, include_chain=True, password=None):
+        pfx = crypto_openssl.PKCS12Type()
+        pfx.set_privatekey(crypto_openssl.PKey.from_cryptography_key(self._private_key))
+        pfx.set_certificate(crypto_openssl.X509.from_cryptography(self._certificate))
+        if include_chain:
+            pfx.set_ca_certificates(None)  ## FIXME Implement
+        return pfx.export(password)
+
+    def get_ca_pem(self):
+        return b'' ## FIXME Implement
+
+    def get_cert_pem(self):
+        return self._certificate.public_bytes(serialization.Encoding.PEM)
+
+    def get_key_pem(self, encryption_algorithm=serialization.NoEncryption()):
+        return self._private_key.private_bytes(encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=encryption_algorithm)
+
+    def get_hexhash(self):
+        return sha256(self.certificate).hexdigest()

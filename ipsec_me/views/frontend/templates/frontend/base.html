@@ -1,0 +1,30 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block navbar %}
+  {# {{nav.top.render(renderer='main_navbar')}} #}
+{% endblock %}
+
+{% block content %}
+<div class="container" role="main">
+  <div class="clearfix"></div>
+  {% block flashes %}
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+          {% for cat, message in messages %}
+            {% with category = "success" if cat == "message" else cat %}
+              <div class="alert alert-{{category}} alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+              </div>
+            {% endwith %}
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  {% endblock %}
+  {% block inner %}
+  {% endblock %}
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "frontend/devices/DeviceBase.html" %}
+
+{% block instructions %}
+  <h3>Step 1: Import VPN profile</h3>
+  <p>Import the configuration profile opening this link with the device: <a href="{{url_for('.device_ios10_profile', device=device)}}">Import profile</a><p>
+
+  <p>You can also scan the following QR code with the camera app. A notification will pop up that will allow you to install the configuration profile.
+    <img src="{{ qrcode(url_for('.device_ios10_profile', device=device, _external=True)) }}" style='height: 5cm'></p>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "frontend/devices/DeviceBase.html" %}
+
+{% macro generic_instructions() %}
+  <h3>Step 1: Import privat key, user and CA certificate</h3>
+  <p>Import the following files:</p>
+  <ul>
+    <li>
+      <dl>
+        <dt><a href="{{url_for('.device_generic_ca', device=device)}}">ca.pem</a></dt>
+        <dd>CA certificate</dd>
+
+        <dt><a href="{{url_for('.device_generic_cert', device=device)}}">generic_device.pem</a></dt>
+        <dd>User certificate</dd>
+
+        <dt><a href="{{url_for('.device_generic_key', device=device)}}">generic_device_key.pem</a></dt>
+        <dd>User certificate private key</dd>
+      </dl>
+    </li>
+  </ul>
+  <p>OR</p>
+  <ul>
+    <li>
+      <dl>
+        <dt><a href="{{url_for('.device_generic_pkcs12', device=device)}}">generic_device.p12</a></dt>
+        <dd>CA certificate, User certificate, User certificate private key as one file</dd>
+      </dl>
+    </li>
+  </ul>
+  <h3>Step 2: Set the following configuration on your device</h3>
+  <dl class="dl-horizontal">
+    <dt>VPN type</dt> <dd>IPsec</dd>
+    <dt>IPsec type</dt> <dd>IKEv2</dd>
+    <dt>IPsec server name</dt> <dd>{{device.vpn_user.vpn_server.external_hostname}}</dd>
+    <dt>Authentication type</dt> <dd>Certificate</dd>
+  </dl>
+  <p>Select CA/certificate as imported in Step 1.</p>
+{% endmacro %}
+
+{% block instructions %}
+<p>These are generic instructions for the case when no other instructions are available.</p>
+{{ generic_instructions() }}
+{% endblock %}

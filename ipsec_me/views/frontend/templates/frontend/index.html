@@ -1,0 +1,25 @@
+{% extends "frontend/base.html" %}
+{% block title %}{{ _("VPN list") }}{% endblock %}
+
+{% block inner %}
+  <h2>{{ _("VPN list") }}</h2>
+  {% trans %}
+  The are the VPN servers that you can have access to:
+  {% endtrans %}
+
+  {% for vu in current_user.vpns %}
+    <h3>{{vu.vpn_server.name}}</h3>
+    {% if vu.devices|list|length %}
+      {%trans%}These are the devices you have currently set up to access this server:{%endtrans%}
+      <ul>
+      {% for device in vu.devices %}
+        <li>{{device.name}} <a href="{{url_for('.device_show', vpn_server=vu.vpn_server, device=device)}}">{% trans %}Show setup instructions{% endtrans %}</a></li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      {%trans%}You currently have no devices set up to access this server.{%endtrans%}
+    {% endif %}
+    <a href="{{url_for('.vpn_add_device', vpn_server=vu.vpn_server)}}" class='btn btn-default'>{%trans%}Register new device &hellip;{%endtrans%}</a>
+  {% endfor %}
+  
+{% endblock %}

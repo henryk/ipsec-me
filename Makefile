@@ -37,6 +37,7 @@ db:
 	SETTINGS=$$PWD/etc/conf/dev.conf bin/manage.py init_db
 	SETTINGS=$$PWD/etc/conf/dev.conf bin/manage.py user_add --email "guest@example.com" --password "guest"
 	SETTINGS=$$PWD/etc/conf/dev.conf bin/manage.py user_add --email "admin@example.com" --password "axw" --admin
+	SETTINGS=$$PWD/etc/conf/dev.conf bin/manage.py vpn_create --name "Office-VPN" --hostname "office.vpn.example.com" --base-dn "OU=VPN, O=Example Inc., C=US" --user "guest@example.com" --admin-user "admin@example.com"
 
 newmigration:
 	SETTINGS=$$PWD/etc/conf/dev.conf bin/manage.py drop_db

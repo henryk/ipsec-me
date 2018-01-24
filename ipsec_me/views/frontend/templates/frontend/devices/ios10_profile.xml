@@ -1,0 +1,131 @@
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Set the name to whatever you like, it is used in the profile list on the device -->
+    <key>PayloadDisplayName</key>
+    <string>{{device.vpn_user.vpn_server.name}}</string>
+    <!-- This is a reverse-DNS style unique identifier used to detect duplicate profiles -->
+    <key>PayloadIdentifier</key> <!-- FIXME -->
+    <string>org.example.vpn1</string>
+    <!-- A globally unique identifier, use uuidgen on Linux/Mac OS X to generate it -->
+    <key>PayloadUUID</key>
+    <string>{{device.vpn_user.vpn_server.id}}</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadContent</key>
+    <array>
+        <!-- It is possible to add multiple VPN payloads with different identifiers/UUIDs and names -->
+        <dict>
+            <!-- This is an extension of the identifier given above -->
+            <key>PayloadIdentifier</key> <!-- FIXME -->
+            <string>org.example.vpn1.conf1</string>
+            <!-- A globally unique identifier for this payload -->
+            <key>PayloadUUID</key>
+            <string>{{device.id}}</string>
+            <key>PayloadType</key>
+            <string>com.apple.vpn.managed</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <!-- Set the name to whatever you like, it is used in the profile list on the device -->
+            <key>PayloadDisplayName</key>
+            <string>{{device.vpn_user.vpn_server.name}}</string>
+            <!-- This is the name of the VPN connection as seen in the VPN application later -->
+            <key>UserDefinedName</key>
+            <string>{{device.vpn_user.vpn_server.name}}</string>
+            <key>VPNType</key>
+            <string>IKEv2</string>
+            <key>IKEv2</key>
+            <dict>
+                <!-- Hostname or IP address of the VPN server -->
+                <key>RemoteAddress</key>
+                <string>{{device.vpn_user.vpn_server.external_hostname}}</string>
+                <!-- Remote identity, can be a FQDN, a userFQDN, an IP or (theoretically) a certificate's subject DN. Can't be empty.
+                     IMPORTANT: DNs are currently not handled correctly, they are always sent as identities of type FQDN -->
+                <key>RemoteIdentifier</key>
+                <string>{{device.vpn_user.vpn_server.external_hostname}}</string>
+                <!-- Local IKE identity, should match one of the subjectAltNames of the client certificate
+                     IMPORTANT: As mentioned above, subject DN's currently can't be used -->
+                <key>LocalIdentifier</key>
+                <string>{{device.vpn_user.user.email}}</string>
+                <!-- Optional, if it matches the CN of the root CA certificate (not the full subject DN) a certificate request will be sent
+                     NOTE: If this is not configured make sure to configure leftsendcert=always on the server, otherwise it won't send its certificate -->
+                <!-- <key>ServerCertificateIssuerCommonName</key>
+                <string>Example Root CA</string> -->
+                <!-- Optional, the CN or one of the subjectAltNames of the server certificate to verify it, if not set RemoteIdentifier will be used -->
+                <!-- <key>ServerCertificateCommonName</key>
+                <string>vpn.example.org</string> -->
+                <!-- The server is authenticated using a certificate -->
+                <key>AuthenticationMethod</key>
+                <string>Certificate</string>
+                <!-- Either set this to 0 or don't configure it at all to use certificate authentication also for the client -->
+                <key>ExtendedAuthEnabled</key>
+                <integer>0</integer>
+                <!-- Similarly, instead of AuthName and AuthPassword, we configure the certificate to use -->
+                <key>PayloadCertificateUUID</key>
+                <string>{{device.certificate.id}}</string>
+                <!-- The next two dictionaries are optional (as are the keys in them), but it is recommended to specify them as the default is to use 3DES.
+                     IMPORTANT: Because only one proposal is sent (even if nothing is configured here) it must match the server configuration -->
+                <key>IKESecurityAssociationParameters</key>
+                <dict>
+                    <key>EncryptionAlgorithm</key>
+                    <string>AES-128</string>
+                    <key>IntegrityAlgorithm</key>
+                    <string>SHA1-96</string>
+                    <key>DiffieHellmanGroup</key>
+                    <integer>14</integer>
+                </dict>
+                <key>ChildSecurityAssociationParameters</key>
+                <dict>
+                    <key>EncryptionAlgorithm</key>
+                    <string>AES-128</string>
+                    <key>IntegrityAlgorithm</key>
+                    <string>SHA1-96</string>
+                    <key>DiffieHellmanGroup</key>
+                    <integer>14</integer>
+                </dict>
+            </dict>
+        </dict>
+        <dict>
+            <key>PayloadIdentifier</key> <!-- FIXME -->
+            <string>org.example.vpn1.client</string>
+            <!-- Set the name to whatever you like, it is used in the profile list on the device -->
+            <key>PayloadDisplayName</key>
+            <string>{{device.vpn_user.user.email}}</string>
+            <key>PayloadUUID</key>
+            <string>{{device.certificate.id}}</string>
+            <key>PayloadType</key>
+            <string>com.apple.security.pkcs12</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <!-- Optional password to decrypt the PKCS#12 container, if not set the user is prompted when installing the profile -->
+            <key>Password</key>
+            <string>{{ password }}</string>
+            <!-- This is the Base64 encoded PKCS#12 container with the certificate and private key for the client.
+                 IMPORTANT: The CA certificate will not be extracted from the container, so either install it separately or include it as payload (as seen above) -->
+            <key>PayloadContent</key>
+            <data>
+            {{ b64encode(device.certificate.get_pkcs12(include_chain=False, password=password)) }}
+            </data>
+        </dict>
+        <!-- This payload is optional but it provides an easy way to install the CA certificate together with the configuration -->
+        {% set CA = device.vpn_user.vpn_server.CAs[0].certificate %}{# FIXME #}
+        <dict>
+            <key>PayloadIdentifier</key> <!-- FIXME -->
+            <string>org.example.ca</string>
+            <key>PayloadUUID</key>
+            <string>{{CA.id}}</string>
+            <key>PayloadType</key>
+            <string>com.apple.security.root</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <!-- This is the Base64 (PEM) encoded CA certificate -->
+            <key>PayloadContent</key>
+            <data>
+            {{ b64encode( CA.certificate ) }}
+            </data>
+        </dict>
+    </array>
+</dict>
+</plist>

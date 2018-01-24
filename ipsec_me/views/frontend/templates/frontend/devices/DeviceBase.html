@@ -1,0 +1,10 @@
+{% extends "frontend/base.html" %}
+{% block title %}{{ gettext("Setup instructions for %(name)s", name=device.name) }}{% endblock %}
+
+{% block inner %}
+  <h2>{{ gettext("Setup instructions for %(name)s", name=device.name) }}</h2>
+  
+  {% block instructions %}
+  {% trans %}These are generic instructions, concrete instructions are not available. This is an error.{% endtrans %}
+  {% endblock %}  
+{% endblock %}

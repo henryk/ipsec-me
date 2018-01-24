@@ -11,22 +11,38 @@ from sqlalchemy.ext.declarative import declared_attr
 
 from passlib import pwd
 from flask import current_app
+from uuid import uuid4
+from string import ascii_lowercase, digits
 
 from enum import Enum
 
 from .certificate import Certificate, CertificateStatus, CERTIFICATE_SETTINGS_CA, CERTIFICATE_SETTINGS_IPSEC_SERVER, CERTIFICATE_SETTINGS_IPSEC_DEVICE
+from .utils import GUID
 
 ca_vpn_table = db.Table('ca_vpn_table',
-    db.Column('vpn_server_id', db.Integer, db.ForeignKey('vpn_server.id')),
-    db.Column('certificate_authority_id', db.Integer, db.ForeignKey('certificate_authority.id'))
+    db.Column('vpn_server_id', GUID, db.ForeignKey('vpn_server.id')),
+    db.Column('certificate_authority_id', GUID, db.ForeignKey('certificate_authority.id'))
 )
 
-class CertificateAuthority(db.Model, CRUDMixin):
-    __tablename__ = "certificate_authority"
-    id = db.Column(db.Integer, primary_key=True)
-    DN = db.Column(db.String())
+class SerialNumberMixin(object):
+    next_serial_number = db.Column('next_serial_number', db.Integer, default=1, server_default='1')
 
-    certificate_id = db.Column('certificate_id', db.Integer, db.ForeignKey('certificate.id'))
+    def get_next_serial_number(self):
+        ca = db.session.query(self.__class__).with_lockmode('update').filter_by(id=self.id).one()
+        serial_number = ca.next_serial_number
+        ca.next_serial_number += 1
+        db.session.flush()
+        db.session.expire(self)
+        return serial_number
+
+
+class CertificateAuthority(db.Model, CRUDMixin, SerialNumberMixin):
+    __tablename__ = "certificate_authority"
+    id = db.Column(GUID, primary_key=True, default=uuid4)
+    rdn = db.Column(db.String())
+    base_dn = db.Column(db.String())
+
+    certificate_id = db.Column('certificate_id', GUID, db.ForeignKey('certificate.id'))
     certificate = db.relationship('Certificate')
 
     VPNs = db.relationship(
@@ -34,39 +50,82 @@ class CertificateAuthority(db.Model, CRUDMixin):
         secondary=ca_vpn_table,
         back_populates="CAs")
 
-    def __init__(self, DN, settings=CERTIFICATE_SETTINGS_CA):
-        self.DN = DN
-        self.certificate = Certificate.create(DN=DN, settings=settings)
+    @property
+    def DN(self):
+        if self.base_dn:
+            return "{0}, {1}".format(self.rdn, self.base_dn)
+        else:
+            return self.rdn
 
-    def create_child(self, settings, DN=None, extras={}):
+    def __init__(self, rdn, base_dn="", settings=CERTIFICATE_SETTINGS_CA):
+        self.rdn = rdn
+        self.base_dn = base_dn
+        self.certificate = Certificate.create(DN=self.DN, settings=settings)
+
+    def create_child(self, settings, DN=None, rdn=None, extras={}):
+        if rdn is None:
+            if 'host_names' in extras:
+                rdn = "CN={0}".format(extras['host_names'][0])
+            elif 'user_emails' in extras:
+                rdn = "CN={0}".format(extras['user_emails'][0])
+
         if DN is None:
-            DN = "CN={0}".format(extras['host_names'][0]) ## FIXME
-        return Certificate.create(DN=DN, settings=settings, sign_ca=self.certificate, **extras)
+            if rdn is None:
+                raise ValueError
+            else:
+                if self.base_dn:
+                    DN = "{0}, {1}".format(rdn, self.base_dn)
+                else:
+                    DN = rdn
 
+        extras['serial_number'] = self.get_next_serial_number()
+
+        return Certificate.create(DN=DN, settings=settings, sign_ca=self.certificate, **extras)
 
 class UserType(Enum):
     USER = "user"
     ADMIN = "admin"
 
+DEFAULT_CONFIGURATION = """
+leftsubnet=0.0.0.0/0
+rightsourceip=%dhcp
+keyexchange=ikev2
+ike=aes256-sha1-modp1024,aes128-sha1-modp1024,3des-sha1-modp1024! # Win7 is aes256, sha-1, modp1024; iOS is aes256, sha-256, modp1024; OS X is 3DES, sha-1, modp1024
+esp=aes256-sha256,aes256-sha1,3des-sha1! # Win 7 is aes256-sha1, iOS is aes256-sha256, OS X is 3des-shal1
+"""
+
 class VPNServer(db.Model, CRUDMixin):
     __tablename__ = "vpn_server"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(GUID, primary_key=True, default=uuid4)
     name = db.Column(db.String(255))
     
     external_hostname = db.Column(db.String(255))
     psk = db.Column(db.String(255))
 
-    certificate_id = db.Column('certificate_id', db.Integer, db.ForeignKey('certificate.id'))
+    certificate_id = db.Column('certificate_id', GUID, db.ForeignKey('certificate.id'))
     certificate = db.relationship('Certificate')
+
+    base_dns_name = db.Column(db.String(255))
+
+    configuration = db.Column(db.Text())
 
     CAs = db.relationship(
         "CertificateAuthority",
         secondary=ca_vpn_table,
         back_populates="VPNs")
 
-    def __init__(self, name, external_hostname=None, psk=Ellipsis, certificate=Ellipsis, CAs=None, CA_params={}, certificate_params={}):
+    def __init__(self, name, external_hostname, base_dns_name=None, psk=Ellipsis, certificate=Ellipsis, configuration=DEFAULT_CONFIGURATION, CAs=None, CA_params={}, certificate_params={}):
         self.name = name
         self.external_hostname = external_hostname
+        self.configuration = configuration
+
+        if base_dns_name is None:
+            if '.' in self.external_hostname:
+                host_prefix, self.base_dns_name = self.external_hostname.split('.', 1)
+            else:
+                raise ValueError
+        else:
+            self.base_dns_name = base_dns_name
         
         if psk is Ellipsis:
             self.psk = pwd.genword(entropy=current_app.config["PSK_ENTROPY"])
@@ -75,7 +134,7 @@ class VPNServer(db.Model, CRUDMixin):
         
         if CAs is None:
             CA_params = dict(CA_params)
-            CA_params.setdefault("DN", "CN={0}".format(self.name))
+            CA_params.setdefault("rdn", "CN={0}".format("VPN CA 1"))
             ca = CertificateAuthority.create(**CA_params)
             self.CAs.append(ca)
         else:
@@ -105,19 +164,22 @@ class VPNServer(db.Model, CRUDMixin):
             else:
                 vu.set_user_type(user_type)
 
-            return
+            return vu
 
-        self.users.append(
-            VPNUser.create(vpn_server=self, user_type=user_type, user=user)
-        )
+        vu = VPNUser.create(vpn_server=self, user_type=user_type, user=user)
+        self.users.append( vu )
+        return vu
 
+    def get_signing_ca(self):
+        return self.CAs[0] # FIXME
+
+## FIXME Uniqueness-Constraints in all classes
 
 class VPNUser(db.Model, CRUDMixin):
     __tablename__ = 'vpn_user'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
+    id = db.Column(GUID, primary_key=True, default=uuid4)
 
-    vpn_server_id = db.Column('vpn_server_id', db.Integer, db.ForeignKey('vpn_server.id'))
+    vpn_server_id = db.Column('vpn_server_id', GUID, db.ForeignKey('vpn_server.id'))
     vpn_server = db.relationship('VPNServer', backref=db.backref('users', lazy='dynamic'))
 
     user_type = db.Column(db.Enum(UserType), default=UserType.USER)      
@@ -146,7 +208,7 @@ class DeviceBase(db.Model, CRUDMixin):
     __tablename__ = 'device'
     DEVICE_TYPE = None
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(GUID, primary_key=True, default=uuid4)
     name = db.Column(db.String(255))
     device_type = db.Column(db.String())
 
@@ -157,7 +219,7 @@ class DeviceBase(db.Model, CRUDMixin):
             'polymorphic_identity': cls.DEVICE_TYPE,
         }
 
-    vpn_user_id = db.Column('vpn_user_id', db.Integer, db.ForeignKey('vpn_user.id'))
+    vpn_user_id = db.Column('vpn_user_id', GUID, db.ForeignKey('vpn_user.id'))
     vpn_user = db.relationship('VPNUser', backref=db.backref('devices', lazy='dynamic'))
 
     @classmethod
@@ -173,14 +235,32 @@ class DeviceBase(db.Model, CRUDMixin):
                 return subcls
         return None
 
+    @staticmethod
+    def nameify(name):
+        # 1 Collapse all whitespace
+        name = "_".join(name.split())
+        # 2 Lowercase
+        name = name.lower()
+        # 3 Remove all characters that are not lowercase/digits/_
+        name = "".join(e for e in name if e in ascii_lowercase+digits+'_')
+        return name
+
 class GenericPskXauthDevice(DeviceBase):
     "Generic (PSK/XAUTH)"
     DEVICE_TYPE = "generic_psk_xauth"
 
+    device_identity = db.Column(db.String(255))
     password = db.Column(db.String(255))
 
-    def __init__(self, password=None, **kwargs):
+    def __init__(self, password=None, device_identity=None, **kwargs):
         super(GenericPskXauthDevice, self).__init__(**kwargs)
+        if device_identity is None:
+            if 'vpn_user' in kwargs and 'name' in kwargs:
+                self.device_identity = "{0}_{1}".format(kwargs['vpn_user'].user.email, self.nameify(kwargs['name']))
+            else:
+                raise ValueError
+        else:
+            self.device_identity = device_identity
         if password is None:
             self.password = pwd.genword(entropy=current_app.config["PSK_ENTROPY"])
         else:
@@ -190,13 +270,13 @@ class GenericUserCertificateDevice(DeviceBase):
     "Generic (User Certificate)"
     DEVICE_TYPE = "generic_user_certificate"
 
-    certificate_id = db.Column('certificate_id', db.Integer, db.ForeignKey('certificate.id'))
+    certificate_id = db.Column('certificate_id', GUID, db.ForeignKey('certificate.id'))
     certificate = db.relationship('Certificate')
 
     def __init__(self, certificate=None, **kwargs):
         super(GenericUserCertificateDevice, self).__init__(**kwargs)
 
-        CA = kwargs['vpn_user'].vpn_server.CAs[0] ## FIXME
+        CA = kwargs['vpn_user'].vpn_server.get_signing_ca()
 
         if certificate is None:
             certificate_params = dict()
@@ -217,7 +297,7 @@ class AndroidStrongswanDevice(GenericUserCertificateDevice):
     DEVICE_TYPE = "android_strongswan"
 
 class Ios10Device(GenericUserCertificateDevice):
-    "iOS 10+, OS X 10+"
+    "iOS 10+, OS X 10.11+"
     DEVICE_TYPE = "ios_10"
 
 class Win10Device(GenericUserCertificateDevice):

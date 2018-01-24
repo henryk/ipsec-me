@@ -1,0 +1,10 @@
+{% extends "frontend/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}{{ _("Create new device (2/2)") }}{% endblock %}
+
+{% block inner %}
+  <h2>{{ _("Create new device (2/2)") }}</h2>
+  <p>{{gettext("By submitting this form you'll create a new device of type %(device_type)s within the %(vpn_name)s VPN.", device_type=device_class.__doc__, vpn_name=vpn_server.name)}}</p>
+  {{wtf.quick_form(form, form_type='horizontal')}}
+{% endblock %}

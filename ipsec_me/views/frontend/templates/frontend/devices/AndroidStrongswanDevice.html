@@ -1,0 +1,18 @@
+{% extends "frontend/devices/GenericUserCertificateDevice.html" %}
+
+{% block instructions %}
+  <h3>Step 1: Install the StrongS/WAN app</h3>
+  <p>Install the official <a href="https://play.google.com/store/apps/details?id=org.strongswan.android">StrongS/WAN app</a> from the Google play store.</p>
+  <a href='https://play.google.com/store/apps/details?id=org.strongswan.android'><img alt='Get it on Google Play' src='{{url_for(".static", filename="en_badge_web_generic.png")}}' style='height:5em'/></a>
+
+  <p>You can also scan the following QR code to open the Google play store:
+  <img src="{{ qrcode('https://play.google.com/store/apps/details?id=org.strongswan.android') }}" style='height: 5cm'/></p>
+
+  <h3>Step 2: Import the configuration</h3>
+  <p>Import the configuration profile into the app by opening this link with the device: <a href="{{url_for('.device_android_strongswan_profile', device=device)}}">Import profile</a><p>
+
+  <p>You can also scan the following QR code to open this link:
+    <img src="{{ qrcode(url_for('.device_android_strongswan_profile', device=device, _external=True)) }}" style='height: 5cm'></p>
+
+  <p>After you have opened the configuration profile for import you will see the "Import VPN profile" dialog. Tap the "IMPORT VPN CERTIFICATE FROM PROFILE" button. You'll be asked for a name for the certificate, just accept the default, and for permission for StrongS/WAN to actually use the certificate, tap 'ALLOW'. Finally, tap 'IMPORT' in the StrongS/WAN import VPN profile dialog.</p>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "frontend/base.html" %}
+{% block title %}{{ _("Create new device (1/2)") }}{% endblock %}
+
+{% block inner %}
+  <h2>{{ _("Create new device (1/2)") }}</h2>
+  {%trans%}Please select the type/operating system of the device you want to add to the VPN.{%endtrans%}
+
+  {% for device_class in DeviceBase.all_subclasses() %}
+  {% if device_class.DEVICE_TYPE %}
+    <h3>{{device_class.__doc__}}</h3>
+    <a href="{{url_for('.vpn_add_device', vpn_server=vpn_server, device_class=device_class)}}" class="btn btn-default">Add device of type {{device_class.__doc__}} to the VPN &hellip;</a>
+  {% endif %}
+  {% endfor %}
+  
+{% endblock %}
