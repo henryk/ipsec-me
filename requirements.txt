@@ -4,11 +4,13 @@ passlib>=1.7.0
 ldap3
 pyasn1
 pyasn1_modules
-Flask-DebugToolbar>=0.10.0
 Flask-Bootstrap
 Flask-Babel
 Flask-QRcode
 pyopenssl
+
+## Flask-Diamond has an old release hardcoded. Newer version can be installed locally though with no problems
+#Flask-DebugToolbar>=0.10.0
 
 # Due to https://github.com/flask-admin/flask-admin/issues/1588
 sqlalchemy==1.2.0b3

@@ -27,6 +27,7 @@ def rsync():
         "*.pyc",
         "dist",
         "build",
+        "venv",
     ]
     rsync_project(remote_dir=env.user, local_dir="./", exclude=excluded, delete=True)
 
